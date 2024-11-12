@@ -1,0 +1,106 @@
+# import libraries
+
+import numpy as np 
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
+# Import libraries for classification task
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score , confusion_matrix , classification_report 
+from sklearn.metrics import precision_score, recall_score, f1_score
+
+
+from sklearn.linear_model import LogisticRegression
+
+#Remove warnings
+import warnings
+warnings.filterwarnings('ignore')
+
+# Load Dataset
+
+df = pd.read_csv('Iris.csv')
+df.head()
+
+# Drop id column
+df.drop('Id',axis=1,inplace=True)
+
+df.head()
+
+#check correlation
+ #Select only numerical columns
+numerical_columns = df.select_dtypes(include=['number'])
+
+# Compute correlation matrixplt.figure(figsize=(10,5))
+sns.heatmap(correlation_matrix,annot=True , cmap='RdYlGn')
+plt.title("Correlation of Iris dataset")
+plt.show()
+correlation_matrix = numerical_columns.corr()
+
+correlation_matrix
+
+
+
+# Overview of dataset
+print("Number of Rows :" , df.shape[0])
+print("Number of Columns :" , df.shape[1])
+
+#Describe the data
+
+df.describe()
+
+df.nunique()
+
+#check missing values
+#Check Null values
+missing = df.isnull().sum().sort_values(ascending = False)
+missing
+
+
+#deal with duplicate values
+df.duplicated().sum()
+
+# Drop duplicate values
+df.drop_duplicates(inplace=True)
+
+#deal with outliers
+# Visualize the data before handling outliers
+plt.figure(figsize=(8, 6))
+sns.boxplot(data=df)
+plt.title("Data with Outliers")
+plt.show()
+df.info()
+
+#visulization
+#make pair plot
+sns.pairplot(df,hue= 'Species' , palette = 'Dark2', diag_kind = 'kde')
+plt.show()
+
+
+sns.kdeplot(df[['SepalWidthCm', 'SepalLengthCm']] , fill=True)
+plt.show()
+
+#Model Building
+X = df.drop(['Species'], axis=1)
+y = df['Species']
+
+# Split the data into train and test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create model 
+lg = LogisticRegression()
+
+#Fit the model
+clf = lg.fit(X_train, y_train)
+
+# Predict the model
+y_pred = clf.predict(X_test)
+
+#Evaluate the model
+print("Accuracy Score : ", accuracy_score(y_test, y_pred))
+
+#Print classification report
+print(classification_report(y_test, y_pred))
+
